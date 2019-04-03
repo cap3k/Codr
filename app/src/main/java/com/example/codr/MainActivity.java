@@ -16,6 +16,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
@@ -33,14 +34,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //add the view via xml or programmatically
         al = new ArrayList<>();
-        al.add("php");
-        al.add("c");
-        al.add("python");
-        al.add("java");
-        al.add("html");
-        al.add("c++");
-        al.add("css");
-        al.add("javascript");
+
+        findProjects2();
+
+
 
         arrayAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.helloText, al );
         arrayAdapter.notifyDataSetChanged();
@@ -51,10 +48,7 @@ public class MainActivity extends AppCompatActivity {
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
-                // this is the simplest way to delete an object from the Adapter (/AdapterView)
-                Log.d("LIST", "removed object!");
-                al.remove(0);
-                arrayAdapter.notifyDataSetChanged();
+
             }
 
             @Override
@@ -72,11 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
-                // Ask for more data here
-                al.add("XML ".concat(String.valueOf(i)));
-                arrayAdapter.notifyDataSetChanged();
-                Log.d("LIST", "notified");
-                i++;
+
             }
 
             @Override
@@ -94,6 +84,29 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+    public void findProjects2(){
+
+        DatabaseReference projectDb = FirebaseDatabase.getInstance().getReference().child("Projects");
+        ValueEventListener eventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                    String project = ds.getKey();
+                    al.add(project);
+                    arrayAdapter.notifyDataSetChanged();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        };
+        projectDb.addListenerForSingleValueEvent(eventListener);
+
+
+    }
+
     public void findProjects(){
         DatabaseReference projectDb = FirebaseDatabase.getInstance().getReference().child("Projects");
         projectDb.addChildEventListener(new ChildEventListener() {
@@ -130,5 +143,13 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
         return;
+    }
+
+    public void createProject(View view) {
+        Intent intent = new Intent(MainActivity.this,ChooseLoginRegistrationActivity.class);
+        startActivity(intent);
+        finish();
+        return;
+
     }
 }
