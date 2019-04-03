@@ -22,7 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class RegistrationActivity extends AppCompatActivity {
     private Button mRegister;
 
-    private EditText mEmail,mPassword,mName;
+    private EditText mEmail,mPassword,mName,mAge;
 
     private RadioGroup mRadioGroup;
 
@@ -39,12 +39,7 @@ public class RegistrationActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth){
             final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if(user !=null){
-                Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-                return;
-            }
+
             }
         };
 
@@ -52,6 +47,7 @@ public class RegistrationActivity extends AppCompatActivity {
         mRegister = (Button) findViewById(R.id.registerButton);
 
         mEmail=(EditText)findViewById(R.id.email);
+        mAge=(EditText)findViewById(R.id.age);
         mPassword = (EditText)findViewById(R.id.password);
         mName=(EditText)findViewById(R.id.name);
         mRadioGroup = (RadioGroup) findViewById(R.id.gender);
@@ -68,7 +64,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 if(radioButton.getText() == null) {
                     return;
                 }
-
+                final String age= mAge.getText().toString();
                 final String email= mEmail.getText().toString();
                 final String password = mPassword.getText().toString();
                 final String name = mName.getText().toString();
@@ -79,8 +75,13 @@ public class RegistrationActivity extends AppCompatActivity {
                             Toast.makeText(RegistrationActivity.this, "sign up error", Toast.LENGTH_SHORT).show();
                         }else{
                             String userId = mAuth.getCurrentUser().getUid();
-                            DatabaseReference currentUserDb = FirebaseDatabase.getInstance().getReference().child("Users").child(radioButton.getText().toString()).child("name");
-                            currentUserDb.setValue(name);
+                            DatabaseReference currentUserDb = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
+                            currentUserDb.child("name").setValue(name);
+                            currentUserDb.child("age").setValue(age);
+                            Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                            return;
                         }
                     }
                 });
