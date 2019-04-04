@@ -35,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
         //add the view via xml or programmatically
         al = new ArrayList<>();
 
-        findProjects2();
+        //findProjects2();
+        findProjects();
 
 
 
@@ -48,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
+                Log.d("LIST", "removed object!");
+                al.remove(0);
+                arrayAdapter.notifyDataSetChanged();
 
             }
 
@@ -112,6 +116,10 @@ public class MainActivity extends AppCompatActivity {
         projectDb.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if(dataSnapshot.exists()){
+                    al.add(dataSnapshot.getKey());
+                    arrayAdapter.notifyDataSetChanged();
+                }
 
             }
 

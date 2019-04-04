@@ -2,34 +2,45 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_gravity="center"
-    android:layout_width="250dp"
-    android:layout_height="170dp">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingLeft="40dp"
+    android:paddingRight="40dp"
+    android:paddingTop="20dp"
+    android:paddingBottom="20dp"
+    android:outlineProvider="bounds"
+    android:clipToPadding="false">
 
-    <TextView
-        android:id="@+id/helloText"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#E339"
-        android:gravity="center"
-        android:textColor="@android:color/white"
-        android:textSize="40sp"
-        tools:text="hh" />
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:cardCornerRadius="4dp"
+        android:elevation="3dp"
+        android:id="@+id/cardView">
 
-    <View
-        android:id="@+id/item_swipe_left_indicator"
-        android:alpha="0"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_margin="10dp"
-        android:background="#A5F" />
+        <FrameLayout
+        android:layout_width="250dp"
+        android:layout_height="250dp">
+<ImageView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/projectImage"/>
+            
 
-    <View
-        android:id="@+id/item_swipe_right_indicator"
-        android:alpha="0"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_margin="10dp"
-        android:layout_gravity="right"
-        android:background="#5AF" />
+        <TextView
+            android:id="@+id/helloText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            android:textSize="40sp"
+            tools:text="hh" />
+
+
+        </FrameLayout>
+    </android.support.v7.widget.LinearLayoutCompat>
+
+
 
 </FrameLayout>
