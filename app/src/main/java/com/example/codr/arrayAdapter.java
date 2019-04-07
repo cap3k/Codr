@@ -22,8 +22,8 @@ public class arrayAdapter extends ArrayAdapter<cards> {
        if(convertView == null) {
            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item, parent, false);
        }
-        TextView name = (TextView) convertView.findViewById(R.id.name);
-        ImageView image = (ImageView) convertView.findViewById(R.id.image);
+        TextView name = (TextView) convertView.findViewById(R.id.helloText);
+        ImageView image = (ImageView) convertView.findViewById(R.id.projectImage);
 
         name.setText(card_item.getProjectName());
         image.setImageResource(R.mipmap.ic_launcher);
