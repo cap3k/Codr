@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void createProject(View view) {
-        Intent intent = new Intent(MainActivity.this,ChooseLoginRegistrationActivity.class);
+        Intent intent = new Intent(MainActivity.this,createProject.class);
         startActivity(intent);
         finish();
         return;
