@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,17 +23,18 @@ import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-    private cards cards_data[];
+
     private arrayAdapter arrayAdapter;
     private int i;
 
     private FirebaseAuth mAuth;
+    private DatabaseReference userDb;
 
-    ListView listView;
     List<cards> rowItems;
-
+    private String uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,4 +147,5 @@ public class MainActivity extends AppCompatActivity {
         return;
 
     }
+
 }
