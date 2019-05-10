@@ -33,20 +33,14 @@ public class createProject extends AppCompatActivity {
     private RadioGroup mRadioGroupLanguages1,mRadioGroupLanguages2,mRadioGroupType;
 
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener firebaseAuthStateListener;
+    private String uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_project);
         mAuth = FirebaseAuth.getInstance();
-        firebaseAuthStateListener = new FirebaseAuth.AuthStateListener(){
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth){
-                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-            }
-        };
+        uid = mAuth.getCurrentUser().getUid();
 
         mSaveProject = (Button) findViewById(R.id.saveProject);
 
@@ -86,7 +80,7 @@ public class createProject extends AppCompatActivity {
                 ArrayList<String> languages= new ArrayList<String>();
                 languages.add(language1);
                 languages.add(language2);
-                Project myProject = new Project(name,description,type,languages);
+                Project myProject = new Project(uid,name,description,type,languages);
 
                 DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
                 DatabaseReference projectRef = rootRef.child("Projects");
@@ -96,18 +90,5 @@ public class createProject extends AppCompatActivity {
             }
         });
     }
-
-    @Override
-    protected void onStart(){
-        super.onStart();
-        mAuth.addAuthStateListener(firebaseAuthStateListener);
-    }
-
-    @Override
-    protected void onStop(){
-        super.onStop();
-        mAuth.removeAuthStateListener(firebaseAuthStateListener);
-    }
-
 
 }

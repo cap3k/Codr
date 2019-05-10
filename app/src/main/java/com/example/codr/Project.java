@@ -9,6 +9,16 @@ import com.google.firebase.database.DatabaseReference;
 import java.util.ArrayList;
 
 public class Project implements DatabaseReference.CompletionListener {
+    private String creator;
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
     private String name;
     private String description;
     private String type;
@@ -42,7 +52,8 @@ public class Project implements DatabaseReference.CompletionListener {
         return description;
     }
 
-    public Project(String name, String description, String type, ArrayList<String> languages) {
+    public Project(String creator, String name, String description, String type, ArrayList<String> languages) {
+        this.creator = creator;
         this.name = name;
         this.description = description;
         this.type = type;
