@@ -22,7 +22,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -35,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     List<cards> rowItems;
     private String uid;
-
+    private DatabaseReference projectDb;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +71,13 @@ public class MainActivity extends AppCompatActivity {
                 //You also have access to the original object.
                 //If you want to use it just cast it (String) dataObject
                 Toast.makeText(MainActivity.this, "Lefty", Toast.LENGTH_SHORT).show();
+                cards obj= (cards) dataObject;
+                String projectId=obj.getProjectName();
+                Map<String,Object> mapUser = new HashMap<>();
+                mapUser.put(uid,"no");
+
+
+                projectDb.child(projectId).child("matches").updateChildren(mapUser);
             }
 
             @Override
