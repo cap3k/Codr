@@ -84,9 +84,14 @@ public class createProject extends AppCompatActivity {
 
                 DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
                 DatabaseReference projectRef = rootRef.child("Projects");
+
                 Map<String,Object> map = new HashMap<>();
                 map.put(name,myProject);
-                projectRef.updateChildren(map);
+                projectRef.push().setValue(map);
+                Intent intent = new Intent(createProject.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+                return;
             }
         });
     }

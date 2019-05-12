@@ -72,9 +72,9 @@ public class MainActivity extends AppCompatActivity {
                 //If you want to use it just cast it (String) dataObject
                 Toast.makeText(MainActivity.this, "Lefty", Toast.LENGTH_SHORT).show();
                 cards obj= (cards) dataObject;
-                String projectId=obj.getProjectName();
+                String projectId=obj.getProjectId();
                 Map<String,Object> mapUser = new HashMap<>();
-                mapUser.put(uid,"no");
+                mapUser.put(uid,false);
 
 
                 projectDb.child(projectId).child("matches").updateChildren(mapUser);
@@ -111,10 +111,16 @@ public class MainActivity extends AppCompatActivity {
         projectDb.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                if(dataSnapshot.exists()){
-                    cards Item = new cards(dataSnapshot.getKey().toString(),dataSnapshot.getKey().toString());
-                    rowItems.add(Item);
-                    arrayAdapter.notifyDataSetChanged();
+                if(dataSnapshot.exists() && dataSnapshot.hasChild("matches")&&dataSnapshot.hasChild("creator")) {
+                    if (!dataSnapshot.child("matches").hasChild(uid) && !dataSnapshot.child("creator").getValue().equals(uid)) {
+
+
+                        cards Item = new cards(dataSnapshot.getKey().toString(), dataSnapshot.getKey().toString());
+
+                        rowItems.add(Item);
+                        arrayAdapter.notifyDataSetChanged();
+
+                    }
                 }
 
             }
