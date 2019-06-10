@@ -19,6 +19,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
@@ -44,9 +46,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //add the view via xml or programmatically
         rowItems = new ArrayList<cards>();
-
-        //findProjects2();
+         userDb = FirebaseDatabase.getInstance().getReference().child("Users");
+        projectDb = FirebaseDatabase.getInstance().getReference().child("Projects");
+        mAuth = FirebaseAuth.getInstance();
+        uid = mAuth.getCurrentUser().getUid();
         findProjects();
+
 
 
 
@@ -77,12 +82,22 @@ public class MainActivity extends AppCompatActivity {
                 mapUser.put(uid,false);
 
 
-                projectDb.child(projectId).child("matches").updateChildren(mapUser);
+                projectDb.child(projectId).child(projectId).child("matches").updateChildren(mapUser);
             }
 
             @Override
             public void onRightCardExit(Object dataObject) {
                 Toast.makeText(MainActivity.this, "Righty", Toast.LENGTH_SHORT).show();
+                cards obj= (cards) dataObject;
+                String projectId=obj.getProjectId();
+                Map<String,Object> mapProject = new HashMap<>();
+                Map<String,Object> mapUser = new HashMap<>();
+                mapProject.put(projectId,true);
+                mapUser.put(uid,true);
+                userDb.child(uid).child("matches").updateChildren(mapProject);
+
+                projectDb.child(projectId).child(projectId).child("matches").updateChildren(mapUser);
+
             }
 
             @Override
@@ -111,20 +126,22 @@ public class MainActivity extends AppCompatActivity {
         projectDb.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                if(dataSnapshot.exists() && dataSnapshot.hasChild("matches")&&dataSnapshot.hasChild("creator")) {
-                    if (!dataSnapshot.child("matches").hasChild(uid) && !dataSnapshot.child("creator").getValue().equals(uid)) {
+                    if (!dataSnapshot.child(dataSnapshot.getKey()).child("matches").hasChild(uid) && !dataSnapshot.child(dataSnapshot.getKey()).child("creator").getValue().equals(uid)) {
+                        FirebaseStorage storage = FirebaseStorage.getInstance();
+                        StorageReference storageReference = storage.getReference();
+                        StorageReference ref = storageReference.child("Projects/"+ dataSnapshot.getKey()+"/images");
+                        String imgUrl=null;
+                        if(dataSnapshot.child(dataSnapshot.getKey()).child("imgUrl").getValue()!=null){
+                             imgUrl=dataSnapshot.child(dataSnapshot.getKey()).child("imgUrl").getValue().toString();
+                        }
 
-
-                        cards Item = new cards(dataSnapshot.getKey().toString(), dataSnapshot.getKey().toString());
+                        cards Item = new cards(dataSnapshot.getKey(), dataSnapshot.child(dataSnapshot.getKey()).child("name").getValue().toString(),imgUrl);
 
                         rowItems.add(Item);
                         arrayAdapter.notifyDataSetChanged();
 
                     }
                 }
-
-            }
-
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
