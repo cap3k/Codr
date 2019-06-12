@@ -133,6 +133,8 @@ public class MainActivity extends AppCompatActivity {
                         String imgUrl=null;
                         if(dataSnapshot.child(dataSnapshot.getKey()).child("imgUrl").getValue()!=null){
                              imgUrl=dataSnapshot.child(dataSnapshot.getKey()).child("imgUrl").getValue().toString();
+                        }else{
+                            imgUrl="https://firebasestorage.googleapis.com/v0/b/codr-d7afc.appspot.com/o/Default%2FSans%20titre.png?alt=media&token=6721e218-c26a-44b2-a648-71a7a2b84e09";
                         }
 
                         cards Item = new cards(dataSnapshot.getKey(), dataSnapshot.child(dataSnapshot.getKey()).child("name").getValue().toString(),imgUrl);
