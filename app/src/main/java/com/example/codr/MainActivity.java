@@ -24,6 +24,7 @@ import com.google.firebase.storage.StorageReference;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     List<cards> rowItems;
     private String uid;
+    private List<String> preferences;
     private DatabaseReference projectDb;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,28 +124,53 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void findProjects(){
+
+        DatabaseReference userDb = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
+        userDb.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                  @Override
+                                                  public void onDataChange(DataSnapshot snapshot) {
+
+                                                      if (snapshot.hasChild("preferences")) {
+                                                          preferences = (List<String>) snapshot.child("preferences").getValue();
+                                                      }
+                                                      addCards();
+                                                  }
+                                                  @Override
+                                                  public void onCancelled(DatabaseError databaseError) {
+
+                                                  }
+                                              });
+    };
+
+    public void addCards(){
         DatabaseReference projectDb = FirebaseDatabase.getInstance().getReference().child("Projects");
         projectDb.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    if (!dataSnapshot.child(dataSnapshot.getKey()).child("matches").hasChild(uid) && !dataSnapshot.child(dataSnapshot.getKey()).child("creator").getValue().equals(uid)) {
+
+                if (!dataSnapshot.child(dataSnapshot.getKey()).child("matches").hasChild(uid) && !dataSnapshot.child(dataSnapshot.getKey()).child("creator").getValue().equals(uid) && dataSnapshot.child(dataSnapshot.getKey()).hasChild("languages")) {
+
+                    List<String> languages = (List<String>) dataSnapshot.child(dataSnapshot.getKey()).child("languages").getValue();
+                    if (preferences ==null || !Collections.disjoint(preferences,languages)) {
                         FirebaseStorage storage = FirebaseStorage.getInstance();
                         StorageReference storageReference = storage.getReference();
-                        StorageReference ref = storageReference.child("Projects/"+ dataSnapshot.getKey()+"/images");
-                        String imgUrl=null;
-                        if(dataSnapshot.child(dataSnapshot.getKey()).child("imgUrl").getValue()!=null){
-                             imgUrl=dataSnapshot.child(dataSnapshot.getKey()).child("imgUrl").getValue().toString();
-                        }else{
-                            imgUrl="https://firebasestorage.googleapis.com/v0/b/codr-d7afc.appspot.com/o/Default%2FSans%20titre.png?alt=media&token=6721e218-c26a-44b2-a648-71a7a2b84e09";
+                        StorageReference ref = storageReference.child("Projects/" + dataSnapshot.getKey() + "/images");
+                        String imgUrl = null;
+                        if (dataSnapshot.child(dataSnapshot.getKey()).child("imgUrl").getValue() != null) {
+                            imgUrl = dataSnapshot.child(dataSnapshot.getKey()).child("imgUrl").getValue().toString();
+                        } else {
+                            imgUrl = "https://firebasestorage.googleapis.com/v0/b/codr-d7afc.appspot.com/o/Default%2FSans%20titre.png?alt=media&token=6721e218-c26a-44b2-a648-71a7a2b84e09";
                         }
 
-                        cards Item = new cards(dataSnapshot.getKey(), dataSnapshot.child(dataSnapshot.getKey()).child("name").getValue().toString(),imgUrl);
+
+                        cards Item = new cards(dataSnapshot.getKey(), dataSnapshot.child(dataSnapshot.getKey()).child("name").getValue().toString(), imgUrl);
 
                         rowItems.add(Item);
                         arrayAdapter.notifyDataSetChanged();
 
                     }
                 }
+            }
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
@@ -164,7 +191,15 @@ public class MainActivity extends AppCompatActivity {
 
             };
         });
-    };
+
+    }
+
+    public void settings(View view) {
+        Intent intent = new Intent(MainActivity.this,Settings.class);
+        startActivity(intent);
+        finish();
+        return;
+    }
 
     public void logout(View view) {
         mAuth.signOut();
